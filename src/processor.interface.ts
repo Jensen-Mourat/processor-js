@@ -1,11 +1,14 @@
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 
 export interface ProcessorInterface {
-    // input(input: string): void;
-    // registers(): Observable<string[]>;
-    // flags():Observable<string[]>;
-    // memoryChange(): Observable<MemoryObj[]>
-    // initialiseMemory(size: number):void;
+  // input(input: string): void;
+  // registers(): Observable<string[]>;
+  // flags():Observable<string[]>;
+  // memoryChange(): Observable<MemoryObj[]>
+  // initialiseMemory(size: number):void;
 }
 
-export interface MemoryObj {address: string, value: string}
+export interface MemoryObj {
+  address: string;
+  value: string;
+}
