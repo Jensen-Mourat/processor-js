@@ -1,6 +1,8 @@
 interface String {
     add(s: string, length?: number): string;
 
+    addInt(n: number, length?: number): string;
+
     substract(s: string, length?: number): string;
 
     convertToTwosComp(length?: number): string;
@@ -39,6 +41,12 @@ String.prototype.greaterThan = function (s: string): boolean {
 String.prototype.add = function (s: string, length?: number): string {
     // const hex = s.convertToTwosComp(length);
     const result = parseInt(this as string, 16) + parseInt(s, 16);
+    return result.toString(16).padStart(length ?? 8, '0');
+};
+
+String.prototype.addInt = function (n: number, length?: number): string {
+    // const hex = s.convertToTwosComp(length);
+    const result = parseInt(this as string, 16) + n;
     return result.toString(16).padStart(length ?? 8, '0');
 };
 

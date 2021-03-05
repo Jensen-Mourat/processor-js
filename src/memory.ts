@@ -26,6 +26,15 @@ export class Memory {
         }
     }
 
+    getPreviousAddress(add: string) {
+        const previousAddress = this.states[this.states.length - 1];
+        if (previousAddress) {
+            return this.getValue(add, undefined, previousAddress);
+        } else {
+            return '00000000';
+        }
+    }
+
     reset() {
         this.addresses = [];
         this.states = [];
@@ -50,20 +59,19 @@ export class Memory {
         }
     }
 
-    getValue(address: string, size?: 'b' | 'w' | 'd') {
+    getValue(address: string, size?: 'b' | 'w' | 'd', addresses?: string[]) {
         if (size === 'b') {
-            return this.getByteFromAddress(address.toInt());
+            return this.getByteFromAddress(address.toInt(), addresses);
         }
         if (size === 'w') {
-            return this.getByteFromAddress(address.toInt() + 1) + this.getByteFromAddress(address.toInt());
+            return this.getByteFromAddress(address.toInt() + 1, addresses) + this.getByteFromAddress(address.toInt(), addresses);
         }
 
-        return this.getByteFromAddress(address.toInt() + 3) + this.getByteFromAddress(address.toInt() + 2) + this.getByteFromAddress(address.toInt() + 1) + this.getByteFromAddress(address.toInt());
-        
+        return this.getByteFromAddress(address.toInt() + 3, addresses) + this.getByteFromAddress(address.toInt() + 2, addresses) + this.getByteFromAddress(address.toInt() + 1, addresses) + this.getByteFromAddress(address.toInt(), addresses);
     }
 
-    private getByteFromAddress(address: number) {
-        const value = this.addresses[address];
+    private getByteFromAddress(address: number, addresses?: string[]) {
+        const value = !addresses ? this.addresses[address] : addresses[address];
         if (value) {
             return value;
         } else {

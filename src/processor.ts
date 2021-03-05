@@ -6,6 +6,8 @@ import {Instruction as I} from 'disassembler-x86-intel/lib/src/disasm';
 import {generateTable} from './processor-functions/generateTable';
 import {MemorySubject} from './helper/MemorySubject';
 import {tap} from 'rxjs/operators';
+import {JMP_TABLE} from 'disassembler-x86-intel/lib/src/constants/tables/Jump.table';
+import {JUMP, processJump} from './processor-functions/JUMP';
 
 export interface Instruction extends I {
     opCode?: string;
@@ -69,7 +71,11 @@ export class Processor {
             const nextPos = ins[i + 1]?.position!;
             const code = nextPos ? s?.slice(0, (nextPos - x.position!) * 2) : s;
             s = s.replace(code!, '');
-            return {...x, opCode: code};
+            let temp = {...x, opCode: code};
+            if (x.instruction === 'jmp') {
+                temp = {...temp, operand1: {value: processJump(this, temp)}};
+            }
+            return temp;
         });
         this.currentInstructions$.next(instructions);
         this.reset();

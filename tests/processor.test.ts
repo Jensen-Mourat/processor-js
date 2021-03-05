@@ -36,4 +36,13 @@ class processorTest {
             operand2: {register: 'eax', displacement: 'FFFFFFFF', pointer: 'd'}
         });
     }
+
+    @test 'jmp'() {
+        Processor.input('89D8' +
+            '89D8' +
+            '89D8' +
+            '89D8' +
+            'E9F5FFFFFF');
+        Processor.runCurrentInstruction();
+    }
 }
