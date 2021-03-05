@@ -25,7 +25,7 @@ String.prototype.fitTo = function (length): string {
     while (s.length > length) {
         s = s.substr(1);
     }
-    return s as string;
+    return s.padStart(length, '0');
 };
 
 String.prototype.toInt = function (): number {

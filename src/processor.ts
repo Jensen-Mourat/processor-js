@@ -82,8 +82,9 @@ export class Processor {
         this.process(currentInstruction);
         this.flags$.next(this.flags);
         this.registers$.next(this.registers);
+        this.memory.saveState(); // save memory state after each instruction
         const pointer = this.instructionPointer$.getValue();
-        if (instructions[pointer + 1]) {
+        if (instructions[pointer + 1] && currentInstruction.instruction !== 'jmp') {
             this.instructionPointer$.next(pointer + 1);
         }
     }
@@ -96,6 +97,7 @@ export class Processor {
         this.registers$.previous();
         this.instructionPointer$.previous();
         this.flags$.previous();
+        this.memory.previousState();
     }
 
     runAll() {
@@ -103,7 +105,7 @@ export class Processor {
         this.runSub = this.instructionPointer$.pipe(
             tap(_ => {
                 this.runCurrentInstruction();
-            })
+            }),
         ).subscribe();
     }
 
@@ -112,6 +114,7 @@ export class Processor {
         this.resetRegisters();
         this.unsubscribe(this.runSub);
         this.instructionPointer$.reset(0);
+        this.memory.reset();
         if (clearInstructions) {
             this.currentInstructions$.next([]);
         }
@@ -197,6 +200,10 @@ export class Processor {
             .set('esi', '00000000')
             .set('edi', '00000000');
         this.registers$.reset(this.registers);
+    }
+
+    getMemory() {
+        return this.memory;
     }
 
     // flags(): Observable<string[]> | undefined {
