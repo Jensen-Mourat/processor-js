@@ -5,7 +5,7 @@ import {Disassembler} from 'disassembler-x86-intel';
 import {Instruction as I} from 'disassembler-x86-intel/lib/src/disasm';
 import {generateTable} from './processor-functions/generateTable';
 import {MemorySubject} from './helper/MemorySubject';
-import {tap} from 'rxjs/operators';
+import {skipWhile, tap} from 'rxjs/operators';
 import {JMP_TABLE} from 'disassembler-x86-intel/lib/src/constants/tables/Jump.table';
 import {JUMP, processJump} from './processor-functions/JUMP';
 
@@ -33,6 +33,7 @@ export class Processor {
     private currentInstructions$ = new BehaviorSubject<Instruction[]>([]);
     private instructionPointer$ = new MemorySubject<number>(0);
     private functionTable: Map<string, Function> = generateTable();
+    done$ = new BehaviorSubject<boolean>(false);
     private flags = new Map<flagType, IFlag>()
         .set('cf', {value: 0, address: '1'}) // carry flag
         .set('pf', {value: 0, address: '4'}) // parity flag
@@ -90,8 +91,12 @@ export class Processor {
         this.registers$.next(this.registers);
         this.memory.saveState(); // save memory state after each instruction
         const pointer = this.instructionPointer$.getValue();
-        if (instructions[pointer + 1] && currentInstruction.instruction !== 'jmp') {
-            this.instructionPointer$.next(pointer + 1);
+        if (currentInstruction.instruction !== 'jmp') {
+            if (instructions[pointer + 1]) {
+                this.instructionPointer$.next(pointer + 1);
+            } else {
+                this.done$.next(true);
+            }
         }
     }
 
@@ -124,6 +129,7 @@ export class Processor {
         if (clearInstructions) {
             this.currentInstructions$.next([]);
         }
+        this.done$.next(false);
         // reset memory
     }
 
@@ -210,6 +216,27 @@ export class Processor {
 
     getMemory() {
         return this.memory;
+    }
+
+    runAllSync() {
+        let done;
+        const instructions = this.currentInstructions$.getValue();
+        let pointer = 0;
+        while (!done) {
+            const currentInstruction = instructions[pointer];
+            this.process(currentInstruction);
+            if (currentInstruction.instruction !== 'jmp') {
+                if (instructions[pointer + 1]) {
+                    pointer++;
+                } else {
+                    done = true;
+                }
+            } else {
+                //jump
+            }
+        }
+
+        return {registers: this.registers, flags: this.flags, memory: this.memory};
     }
 
     // flags(): Observable<string[]> | undefined {

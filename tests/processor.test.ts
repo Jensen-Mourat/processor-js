@@ -2,6 +2,7 @@ import {suite, test} from '@testdeck/mocha';
 import * as _chai from 'chai';
 import {Memory} from '../src/memory';
 import {Processor} from '../index';
+import {cppCodeGenerator, processOpcode} from '../src/cppCodeGenerator';
 
 _chai.should();
 
@@ -38,11 +39,14 @@ class processorTest {
     }
 
     @test 'jmp'() {
-        Processor.input('89D8' +
-            '89D8' +
-            '89D8' +
-            '89D8' +
-            'E9F5FFFFFF');
-        Processor.runCurrentInstruction();
+        Processor.input('01C8');
+        (async () => {
+            await Processor.runAllSync();
+            console.log('ran');
+        })();
+    }
+
+    @test 'cpp generator'() {
+        console.log(processOpcode('0511110000'));
     }
 }
