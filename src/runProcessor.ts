@@ -4,9 +4,7 @@ import {cppCodeGenerator} from './cppCodeGenerator';
 
 let fs = require('fs');
 let args = process.argv.slice(2);
-// let exec = require('child_process').execFile;
 const {execSync} = require('child_process');
-
 
 const start = () => {
     // generate result from processor
@@ -16,7 +14,7 @@ const start = () => {
     writeFile(cppCodeGenerator(args[0]));
     execSync('compileCpp.bat');
     let realResult = execSync('a.exe').toString();
-    console.log({simulationResult}, {realResult});
+    console.log(true);
 };
 
 // const execFile = (file: string, callback: Function) => {
@@ -39,13 +37,11 @@ const execFile = (name: string, fn?: Function) => {
         if (fn) fn(data.toString());
     });
 };
-
 start();
+
 // execFile('compileCpp.bat');
 // execFile('a.exe', realResult);
 // console.log(realResult);
-
-
 // Processor.input(args[0]);
 // let simulationResult = Processor.runAllSync();
 // exec('a.exe', function (err: any, data: any) {
