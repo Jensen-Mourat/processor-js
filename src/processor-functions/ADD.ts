@@ -36,7 +36,6 @@ export const ADD = (processor: Processor, instruction: Instruction) => {
             formattedResult = result!.fitTo(getLength(register1));
             processor.setRegisterValue(register1.register, formattedResult)
             setAf(r1Value, op2Value, processor);
-
         } else {
             const address = formatAddress(operand1!, processor);
             const register2 = getRegisterType(operand2?.register!);

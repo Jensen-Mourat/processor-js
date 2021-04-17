@@ -14,7 +14,7 @@ export const cppCodeGenerator = (opCode: string) => {
         + 'byte arr[5] = {0x2};\n'
         + 'byte* offset = &arr[0];\n'
         + `asm volatile(".byte ${processOpcode(opCode)}": "=a" (ax),"=b" (bx),"=c" (cx), "=@ccc" (cc): "D" (offset):"cc"); \n`
-        + 'string st = "{eax:" + to_string(ax) + ",ebx:" + to_string(bx)+ ",ecx:" + to_string(cx) + "}";\n'
+        + 'string st = "{eax:" + to_string(ax) + ",ebx:" + to_string(bx)+ ",ecx:" + to_string(cx) + ",edx: 0" + ",esi: 0" + "edi:0"+ "cf:0" + "cf:0"+ "of:0" + "pf:0"+ "zf:0" + "sf:0" +"}";\n'
         + 'cout << st;'
         + '}';
     return cppCode;

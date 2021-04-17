@@ -17,6 +17,9 @@ const start = () => {
     console.log(true);
 };
 
+const writeFile = (data: string) => {
+    fs.writeFileSync('cpu.cpp', data);
+};
 // const execFile = (file: string, callback: Function) => {
 //     exec(file, function (err: any, data: any) {
 //         if (err) console.log(err);
@@ -24,9 +27,7 @@ const start = () => {
 //     });
 // };
 
-const writeFile = (data: string) => {
-    fs.writeFileSync('cpu.cpp', data);
-};
+
 
 const execFile = (name: string, fn?: Function) => {
     execSync(name, (err: any, data: any) => {

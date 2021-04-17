@@ -46,6 +46,7 @@ export class Processor {
         .set('of', {value: 0, address: '800'}); // overflow flag
 
     private flags$ = new MemorySubject<Map<flagType, IFlag>>(this.flags);
+
     private registers = new Map<string, string>()
         .set('eax', '00000000')
         .set('ebx', '00000000')
