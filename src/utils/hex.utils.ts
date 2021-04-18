@@ -41,7 +41,7 @@ String.prototype.greaterThan = function (s: string): boolean {
 String.prototype.add = function (s: string, length?: number): string {
     // const hex = s.convertToTwosComp(length);
     const result = parseInt(this as string, 16) + parseInt(s, 16);
-    return result.toString(16).padStart(length ?? 8, '0');
+    return result.toString(16);
 };
 
 String.prototype.addInt = function (n: number, length?: number): string {

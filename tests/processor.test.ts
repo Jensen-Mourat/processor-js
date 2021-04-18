@@ -10,7 +10,11 @@ _chai.should();
 class processorTest {
 
     before() {
-        Processor.process({instruction: 'add', operand1: {register: 'eax'}, operand2: {value: '1111111'}});
+        // Processor.process({instruction: 'add', operand1: {register: 'eax'}, operand2: {value: '1111111'}});
+    }
+
+    @test 'random'() {
+        console.log(parseInt('-0A', 16));
     }
 
     @test 'memory test'() {
@@ -39,11 +43,11 @@ class processorTest {
     }
 
     @test 'jmp'() {
-        Processor.input('01C8');
-        (async () => {
-            await Processor.runAllSync();
-            console.log('ran');
-        })();
+        console.log(Processor.input('01C0EBFC'));
+        // (async () => {
+        //     await Processor.runAllSync();
+        //     console.log('ran');
+        // })();
     }
 
     @test 'cpp generator'() {

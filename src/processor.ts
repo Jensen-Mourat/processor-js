@@ -1,13 +1,11 @@
-import {MemoryObj, ProcessorInterface} from './processor.interface';
-import {BehaviorSubject, generate, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {Memory} from './memory';
 import {Disassembler} from 'disassembler-x86-intel';
 import {Instruction as I} from 'disassembler-x86-intel/lib/src/disasm';
 import {generateTable} from './processor-functions/generateTable';
 import {MemorySubject} from './helper/MemorySubject';
-import {skipWhile, tap} from 'rxjs/operators';
-import {JMP_TABLE} from 'disassembler-x86-intel/lib/src/constants/tables/Jump.table';
-import {JUMP, processJump} from './processor-functions/JUMP';
+import {tap} from 'rxjs/operators';
+import {EightBitRegisters, SixteenBitRegisters} from './helper/registers';
 
 export interface Instruction extends I {
     opCode?: string;
@@ -73,11 +71,11 @@ export class Processor {
             const nextPos = ins[i + 1]?.position!;
             const code = nextPos ? s?.slice(0, (nextPos - x.position!) * 2) : s;
             s = s.replace(code!, '');
-            let temp = {...x, opCode: code};
-            if (x.instruction === 'jmp') {
-                temp = {...temp, operand1: {value: processJump(this, temp)}};
-            }
-            return temp;
+            // if (x.instruction === 'jmp') {
+            //     console.log('val', x);
+            //     temp = {...temp, operand1: {value: processJump(this, temp)}};
+            // }
+            return {...x, opCode: code};
         });
         this.currentInstructions$.next(instructions);
         this.reset();
@@ -177,11 +175,40 @@ export class Processor {
     }
 
     getRegisterValue(r: string) {
+        if (EightBitRegisters.has(r)) {
+            const reg = this.registers.get('e' + r[0] + 'x')!;
+            if (r.includes('h')) {
+                return reg.substring(0, 2);
+            } else {
+                return reg.substr(2, 4);
+            }
+        }
+        if (SixteenBitRegisters.has(r)) {
+            const reg = this.registers.get('e' + r)!;
+            return reg.substr(4);
+        }
         return this.registers.get(r);
     }
 
     setRegisterValue(r: string, value: string) {
-        this.registers.set(r, value);
+        let updatedVal;
+        if (EightBitRegisters.has(r)) {
+            const name = 'e' + r[0] + 'x';
+            const reg = this.registers.get(name)!;
+            if (r.includes('h')) {
+                updatedVal = reg.substr(0, 4) + value.padStart(2, '0') + reg.substr(6);
+            } else {
+                updatedVal = reg.substr(0, 6) + value.padStart(2, '0');
+            }
+            this.registers.set(name, updatedVal.toUpperCase().padStart(8, '0'));
+        }
+        if (SixteenBitRegisters.has(r)) {
+            const name = 'e' + r;
+            const reg = this.registers.get(name)!;
+            updatedVal = reg.substr(0, 4) + value.padStart(4, '0');
+            this.registers.set(name, updatedVal.toUpperCase().padStart(8, '0'));
+        }
+        this.registers.set(r, value.toUpperCase().padStart(8, '0'));
     }
 
     getRegisters$() {
