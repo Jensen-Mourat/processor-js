@@ -3,31 +3,31 @@ import {flagType, Processor} from '../processor';
 import {IRegister, operand} from '../processor-functions/ADD';
 
 export const formatAddress = (op: operand, p: Processor) => {
-    let r1Value = op.register ? p.getRegisterValue(op.register!) : undefined;
-    let r2Value = op.register2 ? p.getRegisterValue(op.register2) : undefined;
-    let result = '0';
-    let displacement = op.displacement ?? undefined;
-    const constant = op.constant ?? undefined;
-    if (constant || r2Value) {
-        if (r2Value) {//[eax+eax*2]
-            r2Value = constant ? multiplyBy(r2Value, parseInt(constant)) : r2Value;
-            result = r1Value!.add(r2Value);
-        } else {
-            if (r1Value) { //[eax*2]
-                r1Value = constant ? multiplyBy(r1Value, parseInt(constant)) : r1Value;
-                result = r1Value;
-            }
-        }
-    } else { // [eax]
-        result = r1Value!;
-    }
-    if (displacement) {
-        if (displacement.convertToTwosComp() !== displacement) {
-            displacement = '-' + displacement.convertToTwosComp();
-        }
-        result = result.add(displacement);
-    }
-    return result;
+    // let r1Value = op.register ? p.getRegisterValue(op.register!) : undefined;
+    // let r2Value = op.register2 ? p.getRegisterValue(op.register2) : undefined;
+    // let result = '0';
+    // let displacement = op.displacement ?? undefined;
+    // const constant = op.constant ?? undefined;
+    // if (constant || r2Value) {
+    //     if (r2Value) {//[eax+eax*2]
+    //         r2Value = constant ? multiplyBy(r2Value, parseInt(constant)) : r2Value;
+    //         result = r1Value!.add(r2Value);
+    //     } else {
+    //         if (r1Value) { //[eax*2]
+    //             r1Value = constant ? multiplyBy(r1Value, parseInt(constant)) : r1Value;
+    //             result = r1Value;
+    //         }
+    //     }
+    // } else { // [eax]
+    //     result = r1Value!;
+    // }
+    // if (displacement) {
+    //     if (displacement.convertToTwosComp() !== displacement) {
+    //         displacement = '-' + displacement.convertToTwosComp();
+    //     }
+    //     result = result.add(displacement);
+    // }
+    // return result;
 };
 
 const multiplyBy = (val: string, by: number) => {
