@@ -14,7 +14,8 @@ class processorTest {
     }
 
     @test 'random'() {
-        console.log(parseInt('-0A', 16));
+        Processor.setRegisterValue('ah', '1234');
+        console.log(Processor.getRegisterValue('ah'));
     }
 
     @test 'memory test'() {

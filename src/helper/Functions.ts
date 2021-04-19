@@ -29,13 +29,7 @@ export const formatAddress = (op: operand, p: Processor) => {
     }
     return result;
 };
-export const setAf = (v1: string, v2: string, processor: Processor) => {
-    if (v1.getLowestByte().add(v2.getLowestByte()).length > 2) {
-        processor.setFlag('af', 1);
-    } else {
-        processor.setFlag('af', 0);
-    }
-};
+
 const multiplyBy = (val: string, by: number) => {
     switch (by) {
         case 2 :
@@ -49,7 +43,7 @@ const multiplyBy = (val: string, by: number) => {
     }
 };
 const shift = (val: string, shiftBy: number) => {
-    let bin = hex2bin(val);
+    let bin = hexTobin(val);
     while (shiftBy > 0) {
         shiftBy -= 1;
         bin = bin.substr(1);
@@ -67,7 +61,7 @@ export const processFlags = (p: Processor, result: string, formattedResult: stri
     }
 
     if (flagsList.includes('sf')) {
-        const bin = hex2bin(formattedResult);
+        const bin = hexTobin(formattedResult);
         const msb = bin[0];
         if (msb === '1') {
             p.setFlag('sf', 1);
@@ -90,7 +84,7 @@ export const processFlags = (p: Processor, result: string, formattedResult: stri
         }
     }
     if (flagsList.includes('pf')) {
-        const bin = hex2bin(formattedResult.getLowestByte());
+        const bin = hexTobin(formattedResult.getLowestByte());
         const ones = [];
         Array.from(bin).forEach(x => {
             if (x === '1') {
@@ -104,8 +98,8 @@ export const processFlags = (p: Processor, result: string, formattedResult: stri
         }
     }
 };
-const hex2bin = (hex: string, register?: IRegister) => {
-    return (parseInt(hex, 16).toString(2)).padStart(register ? register.is8bit ? 8 : register.is16bit ? 16 : 32 : hex.length * 4, '0');
+export const hexTobin = (hex: string, length?: number) => {
+    return (parseInt(hex, 16).toString(2)).padStart(length ?? 32, '0');
 };
 export const getLength = (register: IRegister): number => {
     return register.is8bit ? 2 : register.is16bit ? 4 : 8;

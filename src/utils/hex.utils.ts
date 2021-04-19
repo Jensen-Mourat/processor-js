@@ -11,6 +11,8 @@ interface String {
 
     greaterThan(s: string): boolean;
 
+    lessThan(s: string): boolean;
+
     isOverflow(length?: number): boolean;
 
     toInt(): number;
@@ -38,6 +40,10 @@ String.prototype.greaterThan = function (s: string): boolean {
     return parseInt(this as string, 16) > parseInt(s, 16);
 };
 
+String.prototype.lessThan = function (s: string): boolean {
+    return parseInt(this as string, 16) < parseInt(s, 16);
+};
+
 String.prototype.add = function (s: string, length?: number): string {
     // const hex = s.convertToTwosComp(length);
     const result = parseInt(this as string, 16) + parseInt(s, 16);
@@ -51,9 +57,12 @@ String.prototype.addInt = function (n: number, length?: number): string {
 };
 
 String.prototype.substract = function (s: string, length?: number): string {
-    const hex = s.convertToTwosComp(length);
-    const result = parseInt(this as string, 16) - parseInt(hex, 16);
-    return result.toString(16).padStart(length ?? 8, '0');
+    const result = parseInt(this as string, 16) - parseInt(s, 16);
+    if (result < 0) {
+        return 'f' + result.toString(16).padStart(s.length, '0');
+    } else {
+        return result.toString(16);
+    }
 };
 
 String.prototype.convertToTwosComp = function (length?: number): string {

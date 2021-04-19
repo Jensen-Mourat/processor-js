@@ -4,8 +4,9 @@ import {Disassembler} from 'disassembler-x86-intel';
 import {Instruction as I} from 'disassembler-x86-intel/lib/src/disasm';
 import {generateTable} from './processor-functions/generateTable';
 import {MemorySubject} from './helper/MemorySubject';
-import {tap} from 'rxjs/operators';
-import {EightBitRegisters, SixteenBitRegisters} from './helper/registers';
+import {filter, takeUntil, tap} from 'rxjs/operators';
+import {EightBitRegisters, SixteenBitRegisters, ThirtyTwoBitRegisters} from './helper/registers';
+import {processFlags} from './helper/Functions';
 
 export interface Instruction extends I {
     opCode?: string;
@@ -85,18 +86,23 @@ export class Processor {
     runCurrentInstruction() {
         const instructions = this.currentInstructions$.getValue();
         const currentInstruction = instructions[this.instructionPointer$.getValue()];
-        this.process(currentInstruction);
-        this.flags$.next(this.flags);
-        this.registers$.next(this.registers);
-        this.memory.saveState(); // save memory state after each instruction
-        const pointer = this.instructionPointer$.getValue();
-        if (currentInstruction.instruction !== 'jmp') {
-            if (instructions[pointer + 1]) {
-                this.instructionPointer$.next(pointer + 1);
-            } else {
-                this.done$.next(true);
-            }
+        if (currentInstruction) {
+            this.process(currentInstruction);
+            this.flags$.next(this.flags);
+            this.registers$.next(this.registers);
+            this.memory.saveState(); // save memory state after each instruction
+            return false;
+        } else {
+            this.done$.next(true);
+            return true;
         }
+    }
+
+    moveInstructionPointerToPos(pos: string) {
+        const _pos = parseInt(pos, 16);
+        const instructions = this.currentInstructions$.getValue();
+        const ind = instructions.findIndex(x => x.position === _pos);
+        this.moveInstructionPointer(ind);
     }
 
     runNext() {
@@ -112,11 +118,13 @@ export class Processor {
 
     runAll() {
         this.reset();
-        this.runSub = this.instructionPointer$.pipe(
-            tap(_ => {
-                this.runCurrentInstruction();
-            }),
-        ).subscribe();
+        this.runAllSync();
+        // this.runSub = this.instructionPointer$.pipe(
+        //     takeUntil(this.done$.pipe(filter(x => x))),
+        //     tap(_ => {
+        //         this.runCurrentInstruction();
+        //     }),
+        // ).subscribe();
     }
 
     reset(clearInstructions?: boolean) {
@@ -178,9 +186,9 @@ export class Processor {
         if (EightBitRegisters.has(r)) {
             const reg = this.registers.get('e' + r[0] + 'x')!;
             if (r.includes('h')) {
-                return reg.substring(0, 2);
+                return reg.substr(4, 2);
             } else {
-                return reg.substr(2, 4);
+                return reg.substr(6);
             }
         }
         if (SixteenBitRegisters.has(r)) {
@@ -196,19 +204,21 @@ export class Processor {
             const name = 'e' + r[0] + 'x';
             const reg = this.registers.get(name)!;
             if (r.includes('h')) {
-                updatedVal = reg.substr(0, 4) + value.padStart(2, '0') + reg.substr(6);
+                updatedVal = reg.substr(0, 4) + value.padStart(2, '0').substr(value.length - 2, 2) + reg.substr(6);
             } else {
-                updatedVal = reg.substr(0, 6) + value.padStart(2, '0');
+                updatedVal = reg.substr(0, 6) + value.padStart(2, '0').substr(value.length - 2, 2);
             }
             this.registers.set(name, updatedVal.toUpperCase().padStart(8, '0'));
-        }
-        if (SixteenBitRegisters.has(r)) {
+        } else if (SixteenBitRegisters.has(r)) {
             const name = 'e' + r;
             const reg = this.registers.get(name)!;
             updatedVal = reg.substr(0, 4) + value.padStart(4, '0');
             this.registers.set(name, updatedVal.toUpperCase().padStart(8, '0'));
+        } else if (ThirtyTwoBitRegisters.has(r)) {
+            this.registers.set(r, value.toUpperCase().padStart(8, '0'));
+        } else {
+            throw new Error('Register ' + r + ' does not exist!');
         }
-        this.registers.set(r, value.toUpperCase().padStart(8, '0'));
     }
 
     getRegisters$() {
@@ -248,22 +258,9 @@ export class Processor {
 
     runAllSync() {
         let done;
-        const instructions = this.currentInstructions$.getValue();
-        let pointer = 0;
         while (!done) {
-            const currentInstruction = instructions[pointer];
-            this.process(currentInstruction);
-            if (currentInstruction.instruction !== 'jmp') {
-                if (instructions[pointer + 1]) {
-                    pointer++;
-                } else {
-                    done = true;
-                }
-            } else {
-                //jump
-            }
+            done = this.runCurrentInstruction();
         }
-
         return {registers: this.registers, flags: this.flags, memory: this.memory};
     }
 
