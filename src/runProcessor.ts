@@ -1,24 +1,24 @@
-import {skipWhile} from 'rxjs/operators';
-import {Processor} from '../index';
-import {cppCodeGenerator} from './cppCodeGenerator';
+import { skipWhile } from 'rxjs/operators';
+import { Processor } from '../index';
+import { cppCodeGenerator } from './cppCodeGenerator';
 
 const fs = require('fs');
 const args = process.argv.slice(2);
-const {execSync} = require('child_process');
+const { execSync } = require('child_process');
 
 const start = () => {
-    // generate result from processor
-    Processor.input(args[0]);
-    const simulationResult = Processor.runAllSync();
-    //generateCppFile
-    writeFile(cppCodeGenerator(args[0]));
-    execSync('compileCpp.bat');
-    const realResult = execSync('a.exe').toString();
-    console.log(true);
+  // generate result from processor
+  Processor.input(args[0]);
+  const simulationResult = Processor.runAllSync();
+  //generateCppFile
+  writeFile(cppCodeGenerator(args[0]));
+  execSync('compileCpp.bat');
+  const realResult = execSync('a.exe').toString();
+  console.log(true);
 };
 
 const writeFile = (data: string) => {
-    fs.writeFileSync('cpu.cpp', data);
+  fs.writeFileSync('cpu.cpp', data);
 };
 // const execFile = (file: string, callback: Function) => {
 //     exec(file, function (err: any, data: any) {
@@ -27,16 +27,14 @@ const writeFile = (data: string) => {
 //     });
 // };
 
-
-
 const execFile = (name: string, fn?: Function) => {
-    execSync(name, (err: any, data: any) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        if (fn) fn(data.toString());
-    });
+  execSync(name, (err: any, data: any) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    if (fn) fn(data.toString());
+  });
 };
 start();
 
@@ -49,6 +47,3 @@ start();
 //     console.log(err);
 //     realResult = data.toString()
 // });
-
-
-

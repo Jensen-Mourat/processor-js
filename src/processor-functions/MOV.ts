@@ -1,11 +1,15 @@
-import {Instruction, Processor} from '../processor';
-import {processorFunctionWrapper} from './processorFunctionWrapper';
+import { Instruction, Processor } from '../processor';
+import { processorFunctionWrapper } from './processorFunctionWrapper';
 
 export const MOV = (processor: Processor, instruction: Instruction) => {
-    processorFunctionWrapper(({op1, op2}) => {
-        const result = op2?.value;
-        return result;
-    }, instruction, processor);
+  processorFunctionWrapper(
+    ({ op1, op2 }) => {
+      const result = op2?.value;
+      return result;
+    },
+    instruction,
+    processor,
+  );
 };
 // export const MOV = (processor: Processor, instruction: Instruction) => {
 //     const {operand1, operand2} = instruction;

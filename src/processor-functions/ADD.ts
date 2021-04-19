@@ -1,14 +1,19 @@
-import {Instruction, Processor} from '../processor';
+import { Instruction, Processor } from '../processor';
 import '../utils/hex.utils';
-import {formatAddress, getLength, getRegisterType, getRegisterValue, processFlags} from '../helper/Functions';
-import {processorFunctionWrapper, setAf} from './processorFunctionWrapper';
+import { formatAddress, getLength, getRegisterType, getRegisterValue, processFlags } from '../helper/Functions';
+import { processorFunctionWrapper, setAf } from './processorFunctionWrapper';
 
 export const ADD = (processor: Processor, instruction: Instruction) => {
-    processorFunctionWrapper(({op1, op2, processor}) => {
-        const result = op1?.value.add(op2?.value!);
-        setAf(processor, op1?.value!, op2?.value!);
-        return result;
-    }, instruction, processor, {flags: ['cf', 'pf', 'zf', 'of', 'sf']});
+  processorFunctionWrapper(
+    ({ op1, op2, processor }) => {
+      const result = op1?.value.add(op2?.value!);
+      setAf(processor, op1?.value!, op2?.value!);
+      return result;
+    },
+    instruction,
+    processor,
+    { flags: ['cf', 'pf', 'zf', 'of', 'sf'] },
+  );
 };
 // const {operand1, operand2} = instruction;
 // let result: string, formattedResult: string;
@@ -56,19 +61,19 @@ export const ADD = (processor: Processor, instruction: Instruction) => {
 // };
 
 export interface IRegister {
-    register: string;
-    is8bit?: boolean;
-    low?: boolean;
-    is16bit?: boolean
+  register: string;
+  is8bit?: boolean;
+  low?: boolean;
+  is16bit?: boolean;
 }
 
 export interface operand {
-    value?: string;
-    register?: string;
-    register2?: string;
-    displacement?: string;
-    constant?: string;
-    pointer?: PointerType;
+  value?: string;
+  register?: string;
+  register2?: string;
+  displacement?: string;
+  constant?: string;
+  pointer?: PointerType;
 }
 
 export type PointerType = 'b' | 'd' | 'w';
