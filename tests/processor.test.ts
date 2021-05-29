@@ -3,6 +3,8 @@ import * as _chai from 'chai';
 import {Memory} from '../src/memory';
 import {Processor} from '../index';
 import {cppCodeGenerator, processOpcode} from '../src/cppCodeGenerator';
+import {hexTobin} from '../src/helper/Functions';
+import {convertToTwosComp} from '../src/helper/twosComplement';
 
 _chai.should();
 
@@ -14,8 +16,29 @@ class processorTest {
     }
 
     @test 'random'() {
-        Processor.setRegisterValue('ah', '1234');
-        console.log(Processor.getRegisterValue('ah'));
+        // Processor.setRegisterValue('ah', '1234');
+        // console.log(Processor.getRegisterValue('ah'));
+    }
+
+    @test 'random2'(){
+        export const convertToTwosComp = (s: string) => {
+            s = makeHexLengthEven(s);
+            const hexL = s.length;
+            const hex = parseInt(s, 16);
+            const maxHex = parseInt('ffffffff'.slice(0, hexL), 16);
+            const twosC = (maxHex - hex + 1).toString(16).toUpperCase();
+            return makeValueToByte(twosC, hexL as 2 | 4 | 8);
+        };
+        const value1 = '10';
+        const value2 = ('10');
+        const constant = 8;
+        const result = '100';
+        const bin1 = hexTobin(value1, constant);
+        const bin2 = hexTobin(value2, constant);
+        const binR = hexTobin(result, constant);
+        const msb1 = bin1[0];
+        const msb2 = bin2[0];
+        const msbR = binR[0];
     }
 
     @test 'memory test'() {

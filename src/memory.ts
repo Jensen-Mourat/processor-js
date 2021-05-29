@@ -78,10 +78,6 @@ export class Memory {
 
   private getByteFromAddress(address: number, addresses?: string[]) {
     const value = !addresses ? this.addresses[address] : addresses[address];
-    if (value) {
-      return value;
-    } else {
-      return '00';
-    }
+    return value ?? '00'
   }
 }
