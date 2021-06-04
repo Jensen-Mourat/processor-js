@@ -12,6 +12,7 @@
     "no-var-requires": false,
     "no-console": false,
     "ban-types": false,
-    "object-literal-shorthand": false
+    "object-literal-shorthand": false,
+    "no-bitwise": false
   }
 }
