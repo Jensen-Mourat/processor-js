@@ -1,20 +1,20 @@
 const {execSync} = require('child_process');
-// import logSymbols from 'log-symbols';
-
+const chalk = require('chalk');
 const test = (description: string, opCode: string) => {
+
     const result = execSync('npx ts-node runProcessor.ts ' + opCode)
         .toString()
         .trim();
     const _result: { realResult: any, simulatedResult: any, comparison: boolean } = JSON.parse(result);
     if (_result.comparison) {
         console.log(
-            // logSymbols.success,
+            chalk.greenBright('✔'),
             description + ' passed');
     } else {
         console.log(
-            // logSymbols.error,
+            chalk.redBright('✖'),
             description + ' failed');
-        console.log({results: _result});
+        console.log(chalk.yellowBright('⚠'), 'results: \n', _result);
     }
 };
 

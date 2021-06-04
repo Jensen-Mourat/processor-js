@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "ES5",
+    "module": "CommonJS",
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
     "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
     "lib": [
       "dom",
       "ES2020"
