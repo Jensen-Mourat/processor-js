@@ -1,5 +1,5 @@
 # processor-js
-Intel x86 processor simulation. Receives machine code as input and the processor states (i.e flags and registers) can be queries or subscribed to. Uses my [disassembler](#https://github.com/Jensen-Mourat/disassembler-intel-x86) internally.
+Intel x86 processor simulation. Receives machine code as input and can run the macine code. The processor states changes (i.e flags and registers) can be queried or subscribed to. Uses my [disassembler](#https://github.com/Jensen-Mourat/disassembler-intel-x86) internally.
 
 ## Interface
 
