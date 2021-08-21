@@ -3,7 +3,7 @@ Intel x86 processor simulation. Receives machine code as input and the processor
 
 ## Interface
 
-**Rxjs Observables are used for the states because the reactive nature of observables allows easy UI bindings with frameworks such as Angular**
+**Rxjs Observables because the reactive nature of observables allows easy UI bindings with frameworks such as Angular**
 
 ```
 interface operand {
