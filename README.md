@@ -1,9 +1,9 @@
 # processor-js
-Intel x86 processor simulation. Recieves machine code as input, uses my [disassembler](#https://github.com/Jensen-Mourat/disassembler-intel-x86) internally.
+Intel x86 processor simulation. Receives machine code as input and the processor states (i.e flags and registers) can be queries or subscribed to. Uses my [disassembler](#https://github.com/Jensen-Mourat/disassembler-intel-x86) internally.
 
 ## Interface
 
-**Rxjs Observables are used for the states because the reactive nature of observables allows easy UI bindings with framework such as Angular**
+**Rxjs Observables are used for the states because the reactive nature of observables allows easy UI bindings with frameworks such as Angular**
 
 ```
 interface operand {
