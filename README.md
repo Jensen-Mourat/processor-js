@@ -6,6 +6,30 @@ Intel x86 processor simulation. Recieves machine code as input, uses my [disasse
 ** Rxjs Observables are used for the states because the reactive nature of observables allows easy UI bindings with framework such as Angular **
 
 ```
+interface operand {
+  value?: string;
+  register?: string;
+  register2?: string;
+  displacement?: string;
+  constant?: string;
+  pointer?: pointerType;
+}
+
+interface Instruction {
+  instruction: string;
+  operand1?: operand;
+  operand2?: operand;
+  position?: number;
+  opCode?: string;
+}
+
+interface IFlag {
+  value: 0 | 1;
+  address: string;
+}
+
+type flagType = 'cf' | 'pf' | 'af' | 'zf' | 'sf' | 'tf' | 'if' | 'df' | 'of';
+
 interface Processor {
   getFlags(): Map<flagType, IFlag>;
   input(string): Instruction[]; // use this function to input machine code to the processor, it also returns the instructions disassembled by the processor 
@@ -19,6 +43,14 @@ interface Processor {
   resetInstructionPointer() // reset the instruction pointer
   getRegisterValue(r: string) // r: intel 8, 16 or 32 bit general purpose register i.e ax, eax, ah etc... return hex string
   getRegisters$() // get all register values as observable
-  getMemory() // return the Memory object
+  getMemory(): Memory // return the Memory object
   initialiseMemory(size: number) // size: number of bytes
+}
+
+interface Memory {
+  previousState()// revert the memory to its previous state
+  reset();
+  setValue(address: string, value: string, size?: 'b' | 'w' | 'd') 
+  getValue(address: string, size?: 'b' | 'w' | 'd', addresses?: string[])
+}
 ```
